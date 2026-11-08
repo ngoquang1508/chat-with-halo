@@ -32,7 +32,9 @@ cloudinary.config({
 });
 
 // swagger
-const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
+const swaggerDocument = JSON.parse(
+  fs.readFileSync("./src/swagger.json", "utf8"),
+);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

@@ -17,6 +17,25 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Hàng đợi lưu các request đang chờ refresh token để tránh race condition
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+
+  failedQueue = [];
+};
+
 // tự động gọi refresh api khi access token hết hạn
 api.interceptors.response.use(
   (res) => res,
@@ -25,29 +44,48 @@ api.interceptors.response.use(
 
     // những api không cần check
     if (
-      originalRequest.url.includes("/auth/signin") ||
-      originalRequest.url.includes("/auth/signup") ||
-      originalRequest.url.includes("/auth/refresh")
+      !originalRequest ||
+      originalRequest.url?.includes("/auth/signin") ||
+      originalRequest.url?.includes("/auth/signup") ||
+      originalRequest.url?.includes("/auth/refresh")
     ) {
       return Promise.reject(error);
     }
 
-    originalRequest._retryCount = originalRequest._retryCount || 0;
+    if (error.response?.status === 403 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Đang trong quá trình refresh token -> xếp request vào hàng đợi
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            },
+            reject: (err: any) => {
+              reject(err);
+            },
+          });
+        });
+      }
 
-    if (error.response?.status === 403 && originalRequest._retryCount < 4) {
-      originalRequest._retryCount += 1;
+      originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        const res = await api.post("/auth/refresh", { withCredentials: true });
+        const res = await api.post("/auth/refresh", {}, { withCredentials: true });
         const newAccessToken = res.data.accessToken;
 
         useAuthStore.getState().setAccessToken(newAccessToken);
-
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
         return api(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
         useAuthStore.getState().clearState();
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

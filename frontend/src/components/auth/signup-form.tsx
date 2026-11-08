@@ -43,7 +43,7 @@ export function SignupForm({
 
   // Hiệu ứng giả lập tăng phần trăm khi đang gọi API
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
 
     if (isSubmitting) {
       // Bắt đầu từ 0 khi nhấn nút

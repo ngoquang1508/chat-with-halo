@@ -17,15 +17,22 @@ const io = new Server(server, {
 
 io.use(socketAuthMiddleware);
 
-const onlineUsers = new Map(); // {userId: socketId}
+// Quản lý danh sách người dùng online: { userIdString: Set<socketId> }
+// Dùng String làm key để tránh rò rỉ bộ nhớ (memory leak) do tham chiếu ObjectId
+// và dùng Set để hỗ trợ 1 tài khoản mở nhiều tab / thiết bị
+const onlineUsers = new Map();
 
 io.on("connection", async (socket) => {
   const user = socket.user;
+  const userId = user._id.toString();
 
-  // console.log(`${user.displayName} online với socket ${socket.id}`);
+  // Thêm socket ID vào Set của người dùng
+  if (!onlineUsers.has(userId)) {
+    onlineUsers.set(userId, new Set());
+  }
+  onlineUsers.get(userId).add(socket.id);
 
-  onlineUsers.set(user._id, socket.id);
-
+  // Phát danh sách user online (dạng chuỗi ID)
   io.emit("online-users", Array.from(onlineUsers.keys()));
 
   const conversationIds = await getUserConversationsForSocketIO(user._id);
@@ -37,12 +44,18 @@ io.on("connection", async (socket) => {
     socket.join(conversationId);
   });
 
-  socket.join(user._id.toString());
+  socket.join(userId);
 
   socket.on("disconnect", () => {
-    onlineUsers.delete(user._id);
+    const userSockets = onlineUsers.get(userId);
+    if (userSockets) {
+      userSockets.delete(socket.id);
+      // Chỉ khi tất cả các tab / kết nối của user đã đóng mới xoá khỏi danh sách online
+      if (userSockets.size === 0) {
+        onlineUsers.delete(userId);
+      }
+    }
     io.emit("online-users", Array.from(onlineUsers.keys()));
-    /* console.log(`socket disconnected: ${socket.id}`); */
   });
 });
 

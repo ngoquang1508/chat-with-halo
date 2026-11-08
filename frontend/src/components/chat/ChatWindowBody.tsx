@@ -12,13 +12,14 @@ interface ChatWindowBodyProps {
 }
 
 const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
-  const {
-    activeConversationId,
-    conversations,
-    messages: allMessages,
-    fetchMessages,
-    messageLoading,
-  } = useChatStore();
+  // Tối ưu selector Zustand: Chỉ lắng nghe dữ liệu cần thiết thay vì toàn bộ store
+  const activeConversationId = useChatStore((state) => state.activeConversationId);
+  const conversations = useChatStore((state) => state.conversations);
+  const convoData = useChatStore((state) =>
+    activeConversationId ? state.messages[activeConversationId] : undefined,
+  );
+  const fetchMessages = useChatStore((state) => state.fetchMessages);
+  const messageLoading = useChatStore((state) => state.messageLoading);
   const { user } = useAuthStore();
 
   const [lastMessageStatus, setLastMessageStatus] = useState<
@@ -26,8 +27,8 @@ const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
   >("delivered");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
-  const messages = allMessages[activeConversationId!]?.items ?? [];
-  const hasMore = allMessages[activeConversationId!]?.hasMore ?? false;
+  const messages = convoData?.items ?? [];
+  const hasMore = convoData?.hasMore ?? false;
   const selectedConvo = conversations.find(
     (c) => c._id === activeConversationId,
   );
@@ -199,7 +200,7 @@ const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
             key={message._id ?? index}
             message={message}
             index={index}
-            messages={messages}
+            prevMessage={index > 0 ? messages[index - 1] : undefined}
             selectedConvo={selectedConvo}
             lastMessageStatus={lastMessageStatus}
             onPin={onPin}

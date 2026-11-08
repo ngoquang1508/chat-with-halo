@@ -120,41 +120,41 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on(
       "message:recalled",
       ({ _id, conversationId }: { _id: string; conversationId: string }) => {
-        const state = useChatStore.getState();
-        const messages = state.messages;
-
-        for (const convoId in messages) {
-          const exists = messages[convoId].items.some((m) => m._id === _id);
-          if (exists) {
-            useChatStore.setState((s) => ({
-              messages: {
+        useChatStore.setState((s) => {
+          const currentConvo = s.messages[conversationId];
+          const updatedMessages = currentConvo
+            ? {
                 ...s.messages,
-                [convoId]: {
-                  ...s.messages[convoId],
-                  items: s.messages[convoId].items.map((m) =>
+                [conversationId]: {
+                  ...currentConvo,
+                  items: currentConvo.items.map((m) =>
                     m._id === _id
                       ? { ...m, isRecalled: true, content: null }
                       : m,
                   ),
                 },
+              }
+            : s.messages;
+
+          // Cập nhật lastMessage nếu tin bị thu hồi là tin cuối
+          const updatedConversations = s.conversations.map((c) => {
+            if (c._id !== conversationId) return c;
+            if (c.lastMessage?._id !== _id) return c;
+            return {
+              ...c,
+              lastMessage: {
+                ...c.lastMessage,
+                content: null,
+                isRecalled: true,
               },
-              // Cập nhật lastMessage nếu là tin cuối
-              conversations: s.conversations.map((c) => {
-                if (c._id !== conversationId) return c;
-                if (c.lastMessage?._id !== _id) return c;
-                return {
-                  ...c,
-                  lastMessage: {
-                    ...c.lastMessage,
-                    content: null,
-                    isRecalled: true,
-                  },
-                };
-              }),
-            }));
-            break;
-          }
-        }
+            };
+          });
+
+          return {
+            messages: updatedMessages,
+            conversations: updatedConversations,
+          };
+        });
       },
     );
 

@@ -19,6 +19,9 @@ function App() {
   const { connectSocket, disconnectSocket } = useSocketStore();
 
   useEffect(() => {
+    // Yêu cầu quyền thông báo trình duyệt khi khởi chạy ứng dụng
+    requestNotificationPermission();
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         clearNotification();

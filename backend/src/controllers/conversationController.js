@@ -112,7 +112,7 @@ export const getConversations = async (req, res) => {
         $ne: userId,
       },
     })
-      .sort({ lastMessageAt: -1, updatedAt: -1 })
+      .sort({ lastMessageAt: -1 })
       .populate({
         path: "participants.userId",
         select: "displayName avatarUrl",
@@ -124,7 +124,8 @@ export const getConversations = async (req, res) => {
       .populate({
         path: "seenBy",
         select: "displayName avatarUrl",
-      });
+      })
+      .lean(); // Tối ưu: Dùng lean() để giảm tải bộ nhớ RAM Mongoose Document
 
     const formatted = conversations.map((convo) => {
       const participants = (convo.participants || []).map((p) => ({
@@ -135,7 +136,7 @@ export const getConversations = async (req, res) => {
       }));
 
       return {
-        ...convo.toObject(),
+        ...convo,
         unreadCounts: convo.unreadCounts || {},
         participants: participants,
       };
@@ -159,13 +160,14 @@ export const getConversationById = async (req, res) => {
         select: "displayName avatarUrl",
       })
       .populate({ path: "lastMessage.sender", select: "displayName avatarUrl" })
-      .populate({ path: "seenBy", select: "displayName avatarUrl" });
+      .populate({ path: "seenBy", select: "displayName avatarUrl" })
+      .lean(); // Tối ưu: Dùng lean() để giải phóng RAM
 
     if (!conversation) {
       return res.status(404).json({ message: "Không tìm thấy" });
     }
 
-    const participants = conversation.participants.map((p) => ({
+    const participants = (conversation.participants || []).map((p) => ({
       _id: p.userId?._id,
       displayName: p.userId?.displayName,
       avatarUrl: p.userId?.avatarUrl ?? null,
@@ -174,7 +176,7 @@ export const getConversationById = async (req, res) => {
 
     return res
       .status(200)
-      .json({ conversation: { ...conversation.toObject(), participants } });
+      .json({ conversation: { ...conversation, participants } });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
@@ -208,12 +210,13 @@ export const getMessages = async (req, res) => {
       .populate({
         path: "replyTo",
         select: "content senderId isRecalled",
-      });
+      })
+      .lean(); // Tối ưu: Dùng lean()
 
     let nextCursor = null;
     if (messages.length > Number(limit)) {
       const nextMessage = messages[messages.length - 1];
-      nextCursor = nextMessage.createdAt.toISOString();
+      nextCursor = nextMessage.createdAt ? new Date(nextMessage.createdAt).toISOString() : null;
       messages.pop();
     }
 
@@ -236,7 +239,7 @@ export const getUserConversationsForSocketIO = async (userId) => {
         "participants.userId": userId,
       },
       { _id: 1 },
-    );
+    ).lean(); // Tối ưu: Dùng lean()
 
     return conversations.map((c) => c._id.toString());
   } catch (error) {
@@ -457,7 +460,9 @@ export const getPinnedMessages = async (req, res) => {
     const messages = await Message.find({
       conversationId: id,
       isPinned: true,
-    }).sort({ pinnedAt: -1 });
+    })
+      .sort({ pinnedAt: -1 })
+      .lean(); // Tối ưu: Dùng lean()
 
     return res.json(messages);
   } catch (error) {

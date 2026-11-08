@@ -24,7 +24,7 @@ const ChatWindowLayout = () => {
   useEffect(() => {
     if (!selectedConvo) return;
     fetchPinnedMessages(selectedConvo._id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConvo?._id]);
 
   // Mark seen

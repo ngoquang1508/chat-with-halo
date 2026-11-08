@@ -29,9 +29,11 @@ const friendRequestSchema = new mongoose.Schema(
 
 friendRequestSchema.index({ from: 1, to: 1 }, { unique: true });
 
-friendRequestSchema.index({ from: 1 });
-
+// Index hỗ trợ tìm lời mời theo người nhận
 friendRequestSchema.index({ to: 1 });
+
+// Index kép hỗ trợ tối ưu đếm và lọc lời mời đang chờ (pending)
+friendRequestSchema.index({ to: 1, status: 1 });
 
 const FriendRequest = mongoose.model("FriendRequest", friendRequestSchema);
 export default FriendRequest;

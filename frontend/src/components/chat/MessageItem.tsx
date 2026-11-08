@@ -1,6 +1,6 @@
 import { cn, formatMessageTime } from "@/lib/utils";
 import type { Conversation, Message, Participant } from "@/types/chat";
-import { useState } from "react";
+import React, { useState } from "react";
 import { TooltipProvider } from "../ui/tooltip";
 import UserAvatar from "./UserAvatar";
 import ActionButtons from "./ActionButtons";
@@ -11,7 +11,8 @@ import { useChatStore } from "@/stores/useChatStore";
 interface MessageItemProps {
   message: Message;
   index: number;
-  messages: Message[];
+  messages?: Message[];
+  prevMessage?: Message;
   selectedConvo: Conversation;
   lastMessageStatus: "delivered" | "seen";
   onReply?: (message: Message) => void;
@@ -23,6 +24,7 @@ const MessageItem = ({
   message,
   index,
   messages,
+  prevMessage,
   selectedConvo,
   lastMessageStatus,
   onReply,
@@ -31,12 +33,19 @@ const MessageItem = ({
 }: MessageItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { hideMessage, recallMessage, pinnedMessages, unpinMessage, setReplyingTo } =
-    useChatStore();
+
+  const isPinned = useChatStore((state) =>
+    state.pinnedMessages.some((m) => m._id === message._id),
+  );
+  const hideMessage = useChatStore((state) => state.hideMessage);
+  const recallMessage = useChatStore((state) => state.recallMessage);
+  const unpinMessage = useChatStore((state) => state.unpinMessage);
+  const setReplyingTo = useChatStore((state) => state.setReplyingTo);
 
   const isVisible = isHovered || isDropdownOpen;
 
-  const prev = index > 0 ? messages[index - 1] : undefined;
+  const prev =
+    prevMessage ?? (messages && index > 0 ? messages[index - 1] : undefined);
 
   const isShowTime =
     index === 0 ||
@@ -63,9 +72,9 @@ const MessageItem = ({
     isVisible,
     isOwn: message.isOwn ?? false,
     isRecalled: message.isRecalled ?? false,
-    isPinned: pinnedMessages.some((m) => m._id === message._id),
+    isPinned,
     onReply: () => {
-      setReplyingTo(message); 
+      setReplyingTo(message);
       onReply?.(message);
     },
     onCopy: handleCopy,
@@ -158,4 +167,4 @@ const MessageItem = ({
   );
 };
 
-export default MessageItem;
+export default React.memo(MessageItem);

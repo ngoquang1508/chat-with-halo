@@ -1,5 +1,6 @@
 import { uploadImageFromBuffer } from "../middlewares/uploadMiddleware.js";
 import User from "../models/User.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const authMe = async (req, res) => {
   try {
@@ -45,6 +46,10 @@ export const uploadAvatar = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
+    // Lấy thông tin user hiện tại để kiểm tra avatarId cũ
+    const currentUser = await User.findById(userId).select("avatarId").lean();
+    const oldAvatarId = currentUser?.avatarId;
+
     const result = await uploadImageFromBuffer(file.buffer);
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -57,6 +62,15 @@ export const uploadAvatar = async (req, res) => {
         new: true,
       }
     ).select("avatarUrl");
+
+    // Xoá ảnh avatar cũ trên Cloudinary để tránh lãng phí dung lượng lưu trữ
+    if (oldAvatarId) {
+      try {
+        await cloudinary.uploader.destroy(oldAvatarId);
+      } catch (destroyError) {
+        console.error("Lỗi khi xoá ảnh avatar cũ trên Cloudinary:", destroyError);
+      }
+    }
 
     if (!updatedUser.avatarUrl) {
       return res.status(400).json({ message: "Avatar trả về null" });

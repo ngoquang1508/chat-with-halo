@@ -64,9 +64,9 @@ export interface ChatState {
     replyTo?: string | null,
   ) => Promise<void>;
   // add message
-  addMessage: (message: Message) => Promise<void>;
+  addMessage: (message: Message) => void | Promise<void>;
   // update convo
-  updateConversation: (conversation: Conversation) => void;
+  updateConversation: (conversation: Partial<Conversation> & { _id: string }) => void;
   markAsSeen: () => Promise<void>;
   addConvo: (convo: Conversation) => void;
   createConversation: (

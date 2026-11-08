@@ -31,6 +31,8 @@ friendSchema.pre("save", function (next) {
 });
 
 friendSchema.index({ userA: 1, userB: 1 }, { unique: true });
+// Thêm index cho userB để hỗ trợ truy vấn $or tìm bạn bè không bị Full Collection Scan (COLLSCAN)
+friendSchema.index({ userB: 1 });
 
 const Friend = mongoose.model("Friend", friendSchema);
 

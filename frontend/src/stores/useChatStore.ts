@@ -87,10 +87,15 @@ export const useChatStore = create<ChatState>()(
 
           set((state) => {
             const prev = state.messages[convoId]?.items ?? [];
-            const merged = [...processed, ...prev].filter(
-              (msg, index, self) =>
-                index === self.findIndex((m) => m._id === msg._id),
-            );
+            // Tối ưu: Dùng Map deduplicate O(N) thay vì filter + findIndex O(N^2) gây đơ giật UI
+            const messageMap = new Map<string, Message>();
+            for (const msg of processed) {
+              messageMap.set(msg._id, msg);
+            }
+            for (const msg of prev) {
+              messageMap.set(msg._id, msg);
+            }
+            const merged = Array.from(messageMap.values());
 
             return {
               messages: {
@@ -142,23 +147,18 @@ export const useChatStore = create<ChatState>()(
           console.error("Lỗi xảy ra gửi group message", error);
         }
       },
-      addMessage: async (message) => {
+      addMessage: (message: Message) => {
         try {
           const { user } = useAuthStore.getState();
-          const { fetchMessages } = get();
-
           message.isOwn = message.senderId === user?._id;
 
           const convoId = message.conversationId;
 
-          let prevItems = get().messages[convoId]?.items ?? [];
-
-          if (prevItems.length === 0) {
-            await fetchMessages(message.conversationId);
-            prevItems = get().messages[convoId]?.items ?? [];
-          }
-
           set((state) => {
+            const currentConvo = state.messages[convoId];
+            const prevItems = currentConvo?.items ?? [];
+
+            // Nếu tin nhắn đã có sẵn thì không thêm trùng
             if (prevItems.some((m) => m._id === message._id)) {
               return state;
             }
@@ -168,17 +168,17 @@ export const useChatStore = create<ChatState>()(
                 ...state.messages,
                 [convoId]: {
                   items: [...prevItems, message],
-                  hasMore: state.messages[convoId].hasMore,
-                  nextCursor: state.messages[convoId].nextCursor ?? undefined,
+                  hasMore: currentConvo ? currentConvo.hasMore : true,
+                  nextCursor: currentConvo ? currentConvo.nextCursor : undefined,
                 },
               },
             };
           });
         } catch (error) {
-          console.error("Lỗi xảy khi ra add message:", error);
+          console.error("Lỗi xảy ra khi add message:", error);
         }
       },
-      updateConversation: (conversation: Conversation) => {
+      updateConversation: (conversation: Partial<Conversation> & { _id: string }) => {
         set((state) => ({
           conversations: state.conversations.map((c) =>
             c._id === conversation._id ? { ...c, ...conversation } : c,
