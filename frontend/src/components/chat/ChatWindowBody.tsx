@@ -6,6 +6,7 @@ import { ArrowDown, Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { Message } from "@/types/chat";
 import { toast } from "sonner";
+import MessagesLoadingSkeleton from "@/components/skeleton/MessagesLoadingSkeleton";
 
 interface ChatWindowBodyProps {
   onPin?: (message: Message) => void;
@@ -13,7 +14,9 @@ interface ChatWindowBodyProps {
 
 const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
   // Tối ưu selector Zustand: Chỉ lắng nghe dữ liệu cần thiết thay vì toàn bộ store
-  const activeConversationId = useChatStore((state) => state.activeConversationId);
+  const activeConversationId = useChatStore(
+    (state) => state.activeConversationId,
+  );
   const conversations = useChatStore((state) => state.conversations);
   const convoData = useChatStore((state) =>
     activeConversationId ? state.messages[activeConversationId] : undefined,
@@ -172,13 +175,13 @@ const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
   if (!selectedConvo) return <ChatWelcomeScreen />;
 
   if (!messages?.length) {
+    if (messageLoading) {
+      return <MessagesLoadingSkeleton />;
+    }
+
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        {messageLoading ? (
-          <Loader2 className="size-5 animate-spin" />
-        ) : (
-          <p>Chưa có tin nhắn nào trong cuộc trò chuyện này.</p>
-        )}
+      <div className="flex h-full items-center justify-center text-muted-foreground p-4 text-center text-sm sm:text-base">
+        <p>Chưa có tin nhắn nào trong cuộc trò chuyện này.</p>
       </div>
     );
   }
