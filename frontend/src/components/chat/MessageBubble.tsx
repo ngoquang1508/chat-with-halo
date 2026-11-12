@@ -1,14 +1,7 @@
-import { cn, formatMessageTime } from "@/lib/utils";
+import React from "react";
+import { cn } from "@/lib/utils";
 import type { Message } from "@/types/chat";
-import { Card } from "../ui/card";
-import { Badge } from "../ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
-import { Pin, Reply } from "lucide-react";
+import { Pin, Reply, CheckCheck, FileText, Download } from "lucide-react";
 
 interface MessageBubbleProps {
   message: Message;
@@ -17,10 +10,10 @@ interface MessageBubbleProps {
   isPinned?: boolean;
   senderName?: string;
   showSenderName?: boolean;
-  onScrollToMessage?: (messageId: string) => void; // ✅ click vào quote → scroll
+  onScrollToMessage?: (messageId: string) => void;
 }
 
-const MessageBubble = ({
+const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   lastMessageId,
   lastMessageStatus,
@@ -28,116 +21,121 @@ const MessageBubble = ({
   senderName,
   showSenderName = false,
   onScrollToMessage,
-}: MessageBubbleProps) => {
+}) => {
+  const isOwn = message.isOwn;
   const isLast = message._id === lastMessageId;
 
   return (
     <div
       className={cn(
-        "max-w-2xs lg:max-w-md flex flex-col gap-0.5",
-        message.isOwn ? "items-end" : "items-start",
+        "max-w-[85%] sm:max-w-[75%] md:max-w-[65%] flex flex-col gap-1",
+        isOwn ? "items-end" : "items-start",
       )}
     >
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            {message.isRecalled ? (
-              <Card
-                className={cn(
-                  "relative p-3",
-                  message.isOwn
-                    ? "chat-bubble-sent border-0"
-                    : "chat-bubble-received",
-                )}
-              >
-                {isPinned && (
-                  <Pin
-                    className={cn(
-                      "absolute -top-2.5 w-3.5 h-3.5 text-primary rotate-45",
-                      message.isOwn ? "left-2" : "right-2",
-                    )}
-                  />
-                )}
-                <p className="text-sm italic text-foreground">
-                  {message.isOwn
-                    ? "Bạn đã thu hồi tin nhắn"
-                    : "Tin nhắn đã bị thu hồi"}
-                </p>
-              </Card>
-            ) : (
-              <Card
-                className={cn(
-                  "relative p-3",
-                  message.isOwn
-                    ? "chat-bubble-sent border-0"
-                    : "chat-bubble-received",
-                )}
-              >
-                {isPinned && (
-                  <div
-                    className={cn(
-                      "absolute -top-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary shadow-md shadow-primary/40 ring-2 ring-background animate-pin-nail",
-                      message.isOwn ? "-left-2" : "-right-2",
-                    )}
-                  >
-                    <Pin className="w-2.5 h-2.5 text-primary-foreground rotate-45" />
-                  </div>
-                )}
-
-                {/* Quoted message */}
-                {message.replyTo && (
-                  <button
-                    onClick={() =>
-                      onScrollToMessage?.(message.replyTo!._id)
-                    }
-                    className={cn(
-                      "w-full text-left px-2 py-1.5 rounded border-l-4 border-primary bg-black/10 hover:bg-black/15 transition-colors",
-                    )}
-                  >
-                    <div className="flex items-center gap-1 mb-0.5">
-                      <Reply className="w-3 h-3 text-white shrink-0" />
-                      <span className="text-xs font-semibold text-white">
-                        Trả lời
-                      </span>
-                    </div>
-                    <p className="text-xs truncate">
-                      {message.replyTo.isRecalled
-                        ? "Tin nhắn đã bị thu hồi"
-                        : message.replyTo.content}
-                    </p>
-                  </button>
-                )}
-
-                {showSenderName && !message.isOwn && senderName && (
-                  <p className="text-xs font-semibold text-primary mb-1 whitespace-nowrap">
-                    {senderName}
-                  </p>
-                )}
-
-                <p className="text-sm leading-relaxed wrap-break-word">
-                  {message.content}
-                </p>
-              </Card>
+      {/* Thẻ tin nhắn chính */}
+      <div
+        className={cn(
+          "relative p-3.5 transition-all shadow-xs",
+          isOwn
+            ? "bg-[#5865F2] text-white rounded-3xl rounded-br-xs shadow-indigo-500/10"
+            : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl rounded-bl-xs border border-slate-100 dark:border-slate-700/60 shadow-slate-200/50 dark:shadow-none",
+          message.isRecalled && "italic opacity-80",
+        )}
+      >
+        {/* Ghim tin nhắn */}
+        {isPinned && (
+          <div
+            className={cn(
+              "absolute -top-2 flex items-center justify-center size-5 rounded-full bg-amber-400 text-white shadow-sm ring-2 ring-white dark:ring-slate-900",
+              isOwn ? "-left-2" : "-right-2",
             )}
-          </TooltipTrigger>
-          <TooltipContent side={message.isOwn ? "left" : "right"}>
-            {formatMessageTime(new Date(message.createdAt))}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+          >
+            <Pin className="size-2.5 rotate-45" />
+          </div>
+        )}
 
-      {message.isOwn && isLast && !message.isRecalled && (
-        <Badge
-          variant="outline"
-          className={cn(
-            "text-xs px-1.5 py-0.5 h-4 border-0",
-            lastMessageStatus === "seen"
-              ? "bg-primary/20 text-primary"
-              : "bg-muted text-muted-foreground",
-          )}
-        >
+        {/* Khung trích dẫn tin nhắn đang trả lời */}
+        {message.replyTo && (
+          <button
+            type="button"
+            onClick={() => onScrollToMessage?.(message.replyTo!._id)}
+            className={cn(
+              "w-full text-left px-3 py-1.5 mb-2 rounded-2xl border-l-4 transition-colors text-xs",
+              isOwn
+                ? "bg-white/15 border-white text-white/90 hover:bg-white/20"
+                : "bg-indigo-50 dark:bg-slate-700/50 border-[#5865F2] text-slate-700 dark:text-slate-300 hover:bg-indigo-100/50",
+            )}
+          >
+            <div className="flex items-center gap-1 font-semibold mb-0.5">
+              <Reply className="size-3 shrink-0" />
+              <span>Trả lời tin nhắn</span>
+            </div>
+            <p className="truncate">
+              {message.replyTo.isRecalled
+                ? "Tin nhắn đã bị thu hồi"
+                : message.replyTo.content}
+            </p>
+          </button>
+        )}
+
+        {/* Tên người gửi nếu là tin nhắn nhóm và không phải của mình */}
+        {showSenderName && !isOwn && senderName && (
+          <p className="text-xs font-bold text-[#5865F2] dark:text-indigo-400 mb-1">
+            {senderName}
+          </p>
+        )}
+
+        {/* Nội dung tin nhắn văn bản */}
+        {message.isRecalled ? (
+          <p className="text-xs md:text-sm">
+            {isOwn ? "Bạn đã thu hồi tin nhắn" : "Tin nhắn đã bị thu hồi"}
+          </p>
+        ) : (
+          <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap break-words">
+            {message.content}
+          </p>
+        )}
+
+        {/* Hiển thị hình ảnh đính kèm nếu có imgUrl */}
+        {message.imgUrl && !message.isRecalled && (
+          <div className="mt-2.5 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10">
+            <img
+              src={message.imgUrl}
+              alt="Ảnh đính kèm"
+              className="max-h-60 w-auto object-cover rounded-xl"
+            />
+            <div
+              className={cn(
+                "flex items-center justify-between p-2 text-xs",
+                isOwn
+                  ? "bg-black/10 text-white"
+                  : "bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200",
+              )}
+            >
+              <div className="flex items-center gap-1.5 truncate">
+                <FileText className="size-3.5 flex-shrink-0" />
+                <span className="truncate">Hình ảnh đính kèm</span>
+              </div>
+              <a
+                href={message.imgUrl}
+                target="_blank"
+                rel="noreferrer"
+                download
+                className="p-1 hover:opacity-80 transition-opacity"
+              >
+                <Download className="size-3.5" />
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Trạng thái Đã xem / Đã gửi của tin nhắn cuối */}
+      {isOwn && isLast && !message.isRecalled && (
+        <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500 mr-1.5">
           {lastMessageStatus === "seen" ? "Đã xem" : "Đã gửi"}
-        </Badge>
+          {lastMessageStatus === "seen" && <CheckCheck className="size-3.5" />}
+        </span>
       )}
     </div>
   );
