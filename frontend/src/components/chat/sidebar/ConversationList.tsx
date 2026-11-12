@@ -1,6 +1,7 @@
 import type { Conversation } from "@/types/chat";
 import { ConversationCard } from "./ConversationCard";
 import ConversationSkeleton from "@/components/skeleton/ConversationSkeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -34,15 +35,17 @@ export const ConversationList = ({
   }
 
   return (
-    <div className="pb-16 md:pb-0 flex-1 overflow-y-auto beautiful-scrollbar">
-      {conversations.map((convo) => (
-        <ConversationCard
-          key={convo._id}
-          convo={convo}
-          isActive={activeConversationId === convo._id}
-          onSelect={() => onSelectConversation(convo._id)}
-        />
-      ))}
-    </div>
+    <ScrollArea className="flex-1 min-h-0">
+      <div className="pb-16 md:pb-0">
+        {conversations.map((convo) => (
+          <ConversationCard
+            key={convo._id}
+            convo={convo}
+            isActive={activeConversationId === convo._id}
+            onSelect={() => onSelectConversation(convo._id)}
+          />
+        ))}
+      </div>
+    </ScrollArea>
   );
 };
