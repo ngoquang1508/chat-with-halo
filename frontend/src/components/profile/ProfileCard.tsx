@@ -1,6 +1,6 @@
 import type { User } from "@/types/user";
 import { Card, CardContent } from "../ui/card";
-import UserAvatar from "../chat/UserAvatar";
+import UserAvatar from "../common/UserAvatar";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import { useSocketStore } from "@/stores/useSocketStore";

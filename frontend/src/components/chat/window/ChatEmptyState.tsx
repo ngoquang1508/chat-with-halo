@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import type { Conversation } from "@/types/chat";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
-import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { toast } from "sonner";
-import UserAvatar from "./UserAvatar";
-import GroupChatAvatar from "./GroupChatAvatar";
+import UserAvatar from "@/components/common/UserAvatar";
+import GroupChatAvatar from "@/components/common/GroupChatAvatar";
 
 interface ChatEmptyStateProps {
   selectedConvo: Conversation;

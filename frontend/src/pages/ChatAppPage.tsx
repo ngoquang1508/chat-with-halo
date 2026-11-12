@@ -5,11 +5,11 @@ import { AppNavRail } from "@/components/navigation/AppNavRail";
 import { ChatSidebar } from "@/components/chat/sidebar/ChatSidebar";
 import { ChatWindow } from "@/components/chat/window/ChatWindow";
 import { ConversationInfoPanel } from "@/components/chat/info/ConversationInfoPanel";
-import ChatWelcomeScreen from "@/components/chat/ChatWelcomeScreen";
-import NewGroupChatModal from "@/components/chat/NewGroupChatModal";
-import AddFriendModal from "@/components/chat/AddFriendModal";
-import FriendRequestDialog from "@/components/friendRequest/FriendRequestDialog";
-import FriendListModal from "@/components/createNewChat/FriendListModal";
+import ChatWelcomeScreen from "@/components/chat/window/ChatWelcomeScreen";
+import NewGroupChatModal from "@/components/chat/modals/CreateGroupChatModal/CreateGroupChatModal";
+import AddFriendModal from "@/components/friends/AddFriendModal/AddFriendModal";
+import FriendRequestDialog from "@/components/friends/FriendRequestDialog/FriendRequestDialog";
+import FriendListModal from "@/components/friends/FriendListModal";
 import { Dialog } from "@/components/ui/dialog";
 import type { NavDesktopTab } from "@/types/navigation";
 

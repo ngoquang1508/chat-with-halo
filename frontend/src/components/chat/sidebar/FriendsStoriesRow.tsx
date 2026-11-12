@@ -7,8 +7,8 @@ import { useFriendStore } from "@/stores/useFriendStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 
-import UserAvatar from "../UserAvatar";
-import StatusBadge from "../StatusBadge";
+import UserAvatar from "@/components/common/UserAvatar";
+import StatusBadge from "@/components/common/StatusBadge";
 import UserAvatarSkeleton from "@/components/skeleton/UserAvatarSkeleton";
 
 interface FriendsStoriesRowProps {}

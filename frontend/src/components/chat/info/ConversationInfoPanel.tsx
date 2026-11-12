@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import MuteDialog from "../MuteDialog";
+import MuteDialog from "../modals/MuteDialog";
 import { isMuted } from "@/lib/notification";
 
 interface ConversationInfoPanelProps {

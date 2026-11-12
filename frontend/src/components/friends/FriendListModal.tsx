@@ -1,8 +1,8 @@
 import { useFriendStore } from "@/stores/useFriendStore";
-import { DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MessageCircleMore, Users } from "lucide-react";
-import { Card } from "../ui/card";
-import UserAvatar from "../chat/UserAvatar";
+import { Card } from "@/components/ui/card";
+import UserAvatar from "@/components/common/UserAvatar";
 import { useChatStore } from "@/stores/useChatStore";
 
 interface FriendListModalProps {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { Conversation } from "@/types/chat";
 import { useChatStore } from "@/stores/useChatStore";
 import { ChatHeader } from "./ChatHeader";
-import ChatWindowBody from "../ChatWindowBody";
+import ChatWindowBody from "./ChatWindowBody";
 import { FloatingMessageInput } from "./FloatingMessageInput";
 
 interface ChatWindowProps {

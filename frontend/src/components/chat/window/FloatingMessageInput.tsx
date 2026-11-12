@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 import type { Conversation } from "@/types/chat";
 import { Paperclip, Mic, SendHorizontal, X, Reply } from "lucide-react";
-import EmojiPicker from "@/components/chat/EmojiPicker";
+import EmojiPicker from "./EmojiPicker";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 

@@ -6,14 +6,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import type { Friend } from "@/types/user";
-import IniviteSuggestionList from "../newGroupChat/IniviteSuggestionList";
-import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+import InviteSuggestionList from "./InviteSuggestionList";
+import SelectedUsersList from "./SelectedUsersList";
 import { toast } from "sonner";
 import { useChatStore } from "@/stores/useChatStore";
 
@@ -118,7 +118,7 @@ const NewGroupChatModal = ({ open, onOpenChange }: Props) => {
             />
 
             {search && filteredFriends.length > 0 && (
-              <IniviteSuggestionList
+              <InviteSuggestionList
                 filteredFriends={filteredFriends}
                 onSelect={handleSelectFriend}
               />

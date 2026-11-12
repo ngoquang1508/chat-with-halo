@@ -1,6 +1,6 @@
 import { useFriendStore } from "@/stores/useFriendStore";
 import FriendRequestItem from "./FriendRequestItem";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const ReceivedRequests = () => {

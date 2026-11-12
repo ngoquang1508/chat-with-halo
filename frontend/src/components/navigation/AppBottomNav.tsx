@@ -4,7 +4,7 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useFriendStore } from "@/stores/useFriendStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { NavMobileTab } from "@/types/navigation";
-import UserAvatar from "../chat/UserAvatar";
+import UserAvatar from "../common/UserAvatar";
 
 interface AppBottomNavProps {
   activeTab: NavMobileTab;

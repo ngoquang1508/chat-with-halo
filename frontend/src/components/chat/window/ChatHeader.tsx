@@ -3,9 +3,9 @@ import type { Conversation, Message } from "@/types/chat";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { useChatStore } from "@/stores/useChatStore";
-import UserAvatar from "@/components/chat/UserAvatar";
-import GroupChatAvatar from "@/components/chat/GroupChatAvatar";
-import StatusBadge from "@/components/chat/StatusBadge";
+import UserAvatar from "@/components/common/UserAvatar";
+import GroupChatAvatar from "@/components/common/GroupChatAvatar";
+import StatusBadge from "@/components/common/StatusBadge";
 import {
   ChevronLeft,
   Phone,

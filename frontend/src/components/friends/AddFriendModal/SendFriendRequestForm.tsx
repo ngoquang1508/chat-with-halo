@@ -1,8 +1,8 @@
 import type { UseFormRegister } from "react-hook-form";
-import type { IFormValues } from "../chat/AddFriendModal";
-import { Textarea } from "../ui/textarea";
-import { DialogFooter } from "../ui/dialog";
-import { Button } from "../ui/button";
+import type { IFormValues } from "./AddFriendModal";
+import { Textarea } from "@/components/ui/textarea";
+import { DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 
 interface SendRequestProps {

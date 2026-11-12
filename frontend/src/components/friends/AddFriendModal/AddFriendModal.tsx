@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { User } from "@/types/user";
 import { useFriendStore } from "@/stores/useFriendStore";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import SearchForm from "@/components/AddFriendModal/SearchForm";
-import SendFriendRequestForm from "@/components/AddFriendModal/SendFriendRequestForm";
+import SearchForm from "./SearchForm";
+import SendFriendRequestForm from "./SendFriendRequestForm";
 
 export interface IFormValues {
   username: string;

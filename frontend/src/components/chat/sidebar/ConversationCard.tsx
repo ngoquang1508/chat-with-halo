@@ -2,9 +2,9 @@ import type { Conversation } from "@/types/chat";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { formatOnlineTime } from "@/lib/utils";
-import UserAvatar from "@/components/chat/UserAvatar";
-import GroupChatAvatar from "@/components/chat/GroupChatAvatar";
-import StatusBadge from "@/components/chat/StatusBadge";
+import UserAvatar from "@/components/common/UserAvatar";
+import GroupChatAvatar from "@/components/common/GroupChatAvatar";
+import StatusBadge from "@/components/common/StatusBadge";
 import { BellOff } from "lucide-react";
 import { isMuted } from "@/lib/notification";
 

@@ -1,5 +1,5 @@
 import type { Friend } from "@/types/user";
-import UserAvatar from "../chat/UserAvatar";
+import UserAvatar from "@/components/common/UserAvatar";
 import { X } from "lucide-react";
 
 interface SelectedUsersListProps {

@@ -1,10 +1,10 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { IFormValues } from "../chat/AddFriendModal";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { DialogFooter } from "../ui/dialog";
+import type { IFormValues } from "./AddFriendModal";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { DialogFooter } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 
 interface SearchFormProps {

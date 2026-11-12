@@ -1,12 +1,12 @@
 import type { Friend } from "@/types/user";
-import UserAvatar from "../chat/UserAvatar";
+import UserAvatar from "@/components/common/UserAvatar";
 
 interface InviteSuggestionListProps {
   filteredFriends: Friend[];
   onSelect: (friend: Friend) => void;
 }
 
-const IniviteSuggestionList = ({
+const InviteSuggestionList = ({
   filteredFriends,
   onSelect,
 }: InviteSuggestionListProps) => {
@@ -35,4 +35,4 @@ const IniviteSuggestionList = ({
   );
 };
 
-export default IniviteSuggestionList;
+export default InviteSuggestionList;

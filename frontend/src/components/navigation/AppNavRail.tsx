@@ -28,12 +28,15 @@ import { Logo } from "../common/Logo";
 import ProfileDialog from "../profile/ProfileDialog";
 
 import type { NavDesktopTab } from "@/types/navigation";
-import UserAvatar from "../chat/UserAvatar";
-import StatusBadge from "../chat/StatusBadge";
+import UserAvatar from "../common/UserAvatar";
+import StatusBadge from "../common/StatusBadge";
 
 interface AppNavRailProps {
   activeTab: NavDesktopTab;
   onTabChange: (tab: NavDesktopTab) => void;
+  onOpenNewGroup?: () => void;
+  onOpenAddFriend?: () => void;
+  onOpenFriendRequests?: () => void;
 }
 
 /**

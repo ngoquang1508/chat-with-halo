@@ -1,8 +1,8 @@
 import { cn, formatMessageTime } from "@/lib/utils";
 import type { Conversation, Message, Participant } from "@/types/chat";
 import React, { useState } from "react";
-import { TooltipProvider } from "../ui/tooltip";
-import UserAvatar from "./UserAvatar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import UserAvatar from "@/components/common/UserAvatar";
 import ActionButtons from "./ActionButtons";
 import MessageBubble from "./MessageBubble";
 import { toast } from "sonner";
