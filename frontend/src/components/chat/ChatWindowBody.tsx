@@ -72,7 +72,7 @@ const ChatWindowBody = ({ onPin }: ChatWindowBodyProps) => {
   }
 
   return (
-    <div className="pl-4 py-4 bg-primary-foreground h-full flex flex-col overflow-hidden relative">
+    <div className="pl-2 py-2 bg-transparent h-full flex flex-col overflow-hidden relative">
       <div
         ref={containerRef}
         onScroll={handleScroll}
